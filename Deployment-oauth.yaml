@@ -1,0 +1,91 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: extensible-service-proxy-greeting-svc
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    name: http
+    targetPort: 4180
+    protocol: TCP
+  selector:
+    app: extensible-service-proxy-greeting
+  type: LoadBalancer
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: extensible-service-proxy-greeting
+  namespace: default
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  template:
+    metadata:
+      labels:
+        app: extensible-service-proxy-greeting
+    spec:
+      containers:
+      - name: greeting
+        image: vcrepin/greeting:0.1.0
+        ports:
+          - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "250m"
+          limits:
+            memory: "128Mi"
+            cpu: "500m"          
+      - name: oauth2-proxy
+        image: a5huynh/oauth2_proxy
+        args:
+          - "-upstream=http://localhost:8080/"
+          - "-provider=google"
+          - "-cookie-secure=false"
+          - "-cookie-expire=168h0m"
+          - "-cookie-refresh=60m"
+          - "-cookie-secret=lacapitalepilotage"
+          - "-cookie-domain=internal.lacapitale.com"
+          - "-http-address=0.0.0.0:4180"
+          - "-redirect-url=http://internal.lacapitale.com/oauth2/callback"
+          - "-email-domain=*"
+          - "-skip-auth-preflight=true"
+          - "-client-id=351743328751-bsv9ir2iak55tvbvi7q791n20ept7eee.apps.googleusercontent.com"
+          - "-client-secret=I8grp4Zy_ctRNRk_zXtbUaLN"
+        ports:
+        - containerPort: 4180
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          requests:
+            memory: "32Mi"
+            cpu: "250m"
+          limits:
+            memory: "64Mi"
+            cpu: "500m"          
+          
+          
