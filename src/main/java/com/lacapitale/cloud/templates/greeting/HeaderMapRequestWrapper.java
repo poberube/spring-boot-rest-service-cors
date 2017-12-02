@@ -1,4 +1,4 @@
-package hello;
+package com.lacapitale.cloud.templates.greeting;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

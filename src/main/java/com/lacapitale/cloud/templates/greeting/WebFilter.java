@@ -1,4 +1,4 @@
-package hello;
+package com.lacapitale.cloud.templates.greeting;
 
 import java.io.IOException;
 

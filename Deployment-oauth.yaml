@@ -2,12 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: extensible-service-proxy-greeting-svc
-  namespace: default
+  namespace: lacapitaletemplate
 spec:
   ports:
   - port: 80
     name: http
-    targetPort: 4180
+    targetPort: 8081
     protocol: TCP
   selector:
     app: extensible-service-proxy-greeting
@@ -17,7 +17,7 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   name: extensible-service-proxy-greeting
-  namespace: default
+  namespace: lacapitaletemplate
 spec:
   replicas: 1
   revisionHistoryLimit: 2
@@ -26,9 +26,16 @@ spec:
       labels:
         app: extensible-service-proxy-greeting
     spec:
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config-oauth
+        - name: nginx-ssl
+          secret:
+            secretName: nginx-ssl
       containers:
       - name: greeting
-        image: vcrepin/greeting:0.1.0
+        image: vcrepin/greeting:0.1.1
         ports:
           - containerPort: 8080
         livenessProbe:
@@ -46,46 +53,48 @@ spec:
         resources:
           requests:
             memory: "64Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
             memory: "128Mi"
-            cpu: "500m"          
-      - name: oauth2-proxy
-        image: a5huynh/oauth2_proxy
-        args:
-          - "-upstream=http://localhost:8080/"
-          - "-provider=google"
-          - "-cookie-secure=false"
-          - "-cookie-expire=168h0m"
-          - "-cookie-refresh=60m"
-          - "-cookie-secret=lacapitalepilotage"
-          - "-cookie-domain=internal.lacapitale.com"
-          - "-http-address=0.0.0.0:4180"
-          - "-redirect-url=http://internal.lacapitale.com/oauth2/callback"
-          - "-email-domain=*"
-          - "-skip-auth-preflight=true"
-          - "-client-id=351743328751-bsv9ir2iak55tvbvi7q791n20ept7eee.apps.googleusercontent.com"
-          - "-client-secret=I8grp4Zy_ctRNRk_zXtbUaLN"
+            cpu: "200m"          
+      - name: esp
+        image: gcr.io/endpoints-release/endpoints-runtime:1
+        args: [
+          "--http_port", "8081",
+          "--ssl_port", "443",
+          "--backend", "127.0.0.1:8080",
+          "--service", "greeting-api.endpoints.lacapitalepilotage.cloud.goog",
+          "--version", "2017-12-02r0",
+          "-n", "/etc/nginx/custom/nginx.conf"
+        ]
         ports:
-        - containerPort: 4180
+          - containerPort: 8081
+          - containerPort: 443
+        volumeMounts:
+          - mountPath: /etc/nginx/custom
+            name: nginx-config
+            readOnly: true
+          - mountPath: /etc/nginx/ssl
+            name: nginx-ssl
+            readOnly: true
         livenessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: 8081
           initialDelaySeconds: 10
           periodSeconds: 5
         readinessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: 8081
           initialDelaySeconds: 10
           periodSeconds: 5
         resources:
           requests:
             memory: "32Mi"
-            cpu: "250m"
+            cpu: "100m"
           limits:
             memory: "64Mi"
-            cpu: "500m"          
+            cpu: "200m"          
           
           

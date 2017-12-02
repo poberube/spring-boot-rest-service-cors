@@ -1,4 +1,4 @@
-package hello;
+package com.lacapitale.cloud.templates.greeting;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static springfox.documentation.schema.AlternateTypeRules.newRule;
@@ -83,6 +83,9 @@ public class SwaggerConfig {
 	@Value("${springfox.documentation.swagger.v2.authorizationUrl}")
 	private String authorizationUrl;
 	
+	@Autowired
+	private TypeResolver typeResolver;
+	
 	private ApiInfo metaData() {
 		ApiInfo apiInfo = new ApiInfo(apiName, apiDescription,
 				apiVersion, apiTerms,
@@ -103,14 +106,8 @@ public class SwaggerConfig {
 								typeResolver.resolve(ResponseEntity.class, WildcardType.class)),
 						typeResolver.resolve(WildcardType.class)))
 				.useDefaultResponseMessages(false)
-				.globalResponseMessage(RequestMethod.GET,
-						newArrayList(new ResponseMessageBuilder().code(500).message("Internal Server Error")
-								.responseModel(new ModelRef("Error")).build()))
 				.securitySchemes(newArrayList(securitySchema())).securityContexts(newArrayList(securityContext()));
 	}
-
-	@Autowired
-	private TypeResolver typeResolver;
 
 	private OAuth securitySchema() {
 		AuthorizationScope authorizationScope = new AuthorizationScope(authorizationScopeName,
