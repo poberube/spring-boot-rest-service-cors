@@ -59,7 +59,7 @@ spec:
           "--backend", "127.0.0.1:8081",
           "--service", "greeting-api.endpoints.lacapitalepilotage.cloud.goog",
           "--service_account_key", "/etc/nginx/creds/service-account-creds.json",
-          "--version", "2017-12-02r2",
+          "--version", "2017-12-03r1",
           "-n", "/etc/nginx/custom/nginx.conf"
         ]
         ports:

@@ -12,6 +12,9 @@ info:
     name: Copyright LaCapitale 2018
     url: 'http://lacapitale.com/license'
 host: greeting-api.endpoints.lacapitalepilotage.cloud.goog
+x-google-endpoints:
+  - name: "greeting-api.endpoints.lacapitalepilotage.cloud.goog"
+    target: "35.227.104.98"
 basePath: /
 tags:
   - name: greeting-controller
@@ -47,7 +50,7 @@ paths:
 securityDefinitions:
   firebase:
     type: oauth2
-    authorizationUrl: 'https://cloud.lacapitale.com/sso/login'
+    authorizationUrl: ''
     flow: implicit
     x-google-issuer: "https://securetoken.google.com/lacapitalepilotage"
     x-google-jwks_uri: "https://www.googleapis.com/service_accounts/v1/metadata/x509/securetoken@system.gserviceaccount.com"
