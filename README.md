@@ -27,8 +27,6 @@ Cette commande build le projet et obtient la définition du cloud endpoint qui e
 
 Ajouter les entrees specifiques a google:
 
-  
-
     firebase:
         type: oauth2
         authorizationUrl: 'https://cloud.lacapitale.com/sso/login'
@@ -55,7 +53,16 @@ Deployer une configuration custom de nginx pour tls et cors
 
     kubectl create configmap nginx-config-oauth --from-file=nginx.conf
 
+Créer l'image docker à partir du Dockerfile
+
+    docker build -t vcrepin/greeting:0.1.9 .
+
+Pousser l'image dans le registre
+
+    docker push vcrepin/greeting:0.1.9
+
 Deployer le backend
 
     kubectl create -f Deployment-oauth.yaml
+
 
