@@ -41,9 +41,22 @@ Deployer le cloud endpoint
 
     gcloud endpoints services deploy openapi-swagger.yaml
 
-retrouver le client_id
+retrouver le config_id
 
     gcloud endpoints configs list --service=greeting-api.endpoints.lacapitalepilotage.cloud.goog
+
+Et ajuster le fichier Deployment.yaml avec la valeur
+
+    image: gcr.io/endpoints-release/endpoints-runtime:1
+    args: [
+      "--http_port", "8080",
+      "--ssl_port", "443",
+      "--backend", "127.0.0.1:8081",
+      "--service", "greeting-api.endpoints.lacapitalepilotage.cloud.goog",
+      "--service_account_key", "/etc/nginx/creds/service-account-creds.json",
+      "--version", "2017-12-03r1",
+      "-n", "/etc/nginx/custom/nginx.conf"
+    ]
 
 Deployer un certificat dans kubernetes
 
