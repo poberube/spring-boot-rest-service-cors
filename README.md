@@ -45,7 +45,7 @@ retrouver le config_id
 
     gcloud endpoints configs list --service=greeting-api.endpoints.lacapitalepilotage.cloud.goog
 
-Et ajuster le fichier Deployment.yaml avec la valeur
+Et ajuster le fichier Deployment-oauth.yaml avec la valeur
 
     image: gcr.io/endpoints-release/endpoints-runtime:1
     args: [
