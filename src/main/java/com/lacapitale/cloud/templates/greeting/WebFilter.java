@@ -1,6 +1,7 @@
 package com.lacapitale.cloud.templates.greeting;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -32,12 +33,15 @@ public class WebFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
-
+		logger.info("In web filter");
 		HttpServletRequest req = (HttpServletRequest) request;
 		HeaderMapRequestWrapper requestWrapper = new HeaderMapRequestWrapper(req);
+		for (String header : Collections.list(requestWrapper.getHeaderNames())) {
+			logger.info("Header: "+header + ": "+requestWrapper.getHeader(header));
+		}
 		String token = requestWrapper.getHeader("x-goog-iap-jwt-assertion");
-		logger.info("In web filter");
-		
+		chain.doFilter(requestWrapper, response);
+		/*
 		if (token != null) {
 			logger.info("WebFilter token: " + token);
 			try {
@@ -53,7 +57,7 @@ public class WebFilter implements Filter {
 		} else {
 			logger.warn("Received request without JWT Token!");
 			((HttpServletResponse) response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-		}
+		} */
 	}
 
 	@Override

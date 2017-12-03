@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -33,9 +34,13 @@ public class GreetingController {
         for (String key : headers.keySet()) {
         		System.out.println(key + ": " + headers.get(key));
         }
-        System.out.println("Calling sub greeting...");
-        String echo = restTemplate.postForObject("http://echo-svc/echo", "testfromgreeting", String.class);
-        return new Greeting(counter.incrementAndGet(), String.format(template, name) + " subcall: " + echo);
+        System.out.println("Calling sub echo...");
+        String requestJson = "{\"message\":\"testfromgreeting\"}";
+        HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);
+        String echo = restTemplate.postForObject("http://echo-svc/echo", entity, String.class);
+        String result = String.format(template, name) + " subcall: " + echo;
+        System.out.println("Returning: " + result);
+        return new Greeting(counter.incrementAndGet(), result);
     }
 
     @GetMapping("/greeting-javaconfig")

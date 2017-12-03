@@ -7,8 +7,11 @@ spec:
   ports:
   - port: 80
     name: http
-    targetPort: 8081
+    targetPort: 8080
     protocol: TCP
+  - port: 443
+    protocol: TCP
+    name: https
   selector:
     app: extensible-service-proxy-greeting
   type: LoadBalancer
@@ -33,42 +36,34 @@ spec:
         - name: nginx-ssl
           secret:
             secretName: nginx-ssl
+        - name: service-account-creds
+          secret:
+            secretName: service-account-creds
       containers:
       - name: greeting
-        image: vcrepin/greeting:0.1.1
+        image: vcrepin/greeting:0.1.7
         ports:
-          - containerPort: 8080
-        livenessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
+          - containerPort: 8081
         resources:
           requests:
-            memory: "64Mi"
+            memory: "256Mi"
             cpu: "100m"
           limits:
-            memory: "128Mi"
+            memory: "512Mi"
             cpu: "200m"          
       - name: esp
         image: gcr.io/endpoints-release/endpoints-runtime:1
         args: [
-          "--http_port", "8081",
+          "--http_port", "8080",
           "--ssl_port", "443",
-          "--backend", "127.0.0.1:8080",
+          "--backend", "127.0.0.1:8081",
           "--service", "greeting-api.endpoints.lacapitalepilotage.cloud.goog",
-          "--version", "2017-12-02r0",
+          "--service_account_key", "/etc/nginx/creds/service-account-creds.json",
+          "--version", "2017-12-02r2",
           "-n", "/etc/nginx/custom/nginx.conf"
         ]
         ports:
-          - containerPort: 8081
+          - containerPort: 8080
           - containerPort: 443
         volumeMounts:
           - mountPath: /etc/nginx/custom
@@ -77,24 +72,27 @@ spec:
           - mountPath: /etc/nginx/ssl
             name: nginx-ssl
             readOnly: true
+          - mountPath: /etc/nginx/creds
+            name: service-account-creds
+            readOnly: true
         livenessProbe:
           httpGet:
-            path: /health
-            port: 8081
-          initialDelaySeconds: 10
+            path: /healthz
+            port: 8090
+          initialDelaySeconds: 25
           periodSeconds: 5
         readinessProbe:
           httpGet:
-            path: /health
-            port: 8081
-          initialDelaySeconds: 10
+            path: /healthz
+            port: 8090
+          initialDelaySeconds: 25
           periodSeconds: 5
         resources:
           requests:
-            memory: "32Mi"
+            memory: "64Mi"
             cpu: "100m"
           limits:
-            memory: "64Mi"
+            memory: "128Mi"
             cpu: "200m"          
           
           

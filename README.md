@@ -36,7 +36,7 @@ kubectl create secret generic nginx-ssl --from-file=./nginx.crt --from-file=./ng
 
 Deployer une configuration custom de nginx pour le ssl et cors
 
-kubectl create configmap nginx-config --from-file=nginx.conf
+kubectl create configmap nginx-config-oauth --from-file=nginx.conf
 
 Deployer le backend
 
