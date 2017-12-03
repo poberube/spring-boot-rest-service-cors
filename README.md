@@ -78,4 +78,35 @@ Deployer le backend
 
     kubectl create -f Deployment-oauth.yaml
 
+La suite permet d'utiliser le API Gateway (Kong)
+
+Deploy greeting svc
+
+    kubectl create -f Deployment-greeting.yaml
+
+Connect API to Kong API gateway
+
+    curl -i -X POST \
+      --url http://35.227.61.134:8001/apis/ \
+      --data 'name=greeting-api' \
+      --data 'hosts=greeting-api.com' \
+      --data 'upstream_url=http://greeting-svc'
+
+Set auth plugin to API 
+
+    curl -i -X POST \
+      --url http://35.227.61.134:8001/apis/greeting-api/plugins/ \
+      --data 'name=key-auth'
+
+Create user
+
+    curl -i -X POST \
+      --url http://35.227.61.134:8001/consumers/ \
+      --data "username=Ionic-GKE"
+
+Set user key
+
+    curl -i -X POST \
+      --url http://35.227.61.134:8001/consumers/Ionic-GKE/key-auth/ \
+      --data 'key=qwerty01!'
 

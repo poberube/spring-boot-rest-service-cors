@@ -5,7 +5,7 @@
 
 	<groupId>com.lacapitale.cloud</groupId>
 	<artifactId>spring-boot-rest-service-cors</artifactId>
-	<version>0.1.7</version>
+	<version>0.1.8</version>
 	<description>Kubernetes service template</description>
 	<name>Kubernetes service template</name>
 	<parent>
