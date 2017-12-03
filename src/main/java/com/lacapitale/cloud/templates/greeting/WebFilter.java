@@ -39,9 +39,11 @@ public class WebFilter implements Filter {
 		for (String header : Collections.list(requestWrapper.getHeaderNames())) {
 			logger.info("Header: "+header + ": "+requestWrapper.getHeader(header));
 		}
-		String token = requestWrapper.getHeader("x-goog-iap-jwt-assertion");
+		
 		chain.doFilter(requestWrapper, response);
 		/*
+		// this header is added by the Identity-Aware Proxy (IAP)
+		String token = requestWrapper.getHeader("x-goog-iap-jwt-assertion");
 		if (token != null) {
 			logger.info("WebFilter token: " + token);
 			try {

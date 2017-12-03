@@ -30,10 +30,7 @@ public class GreetingController {
     @GetMapping("/greeting")
     public Greeting greeting(@RequestParam(required=false, defaultValue="World") String name, 
     		@RequestHeader HttpHeaders headers) {
-        System.out.println("==== in greeting headers:");
-        for (String key : headers.keySet()) {
-        		System.out.println(key + ": " + headers.get(key));
-        }
+        System.out.println("==== in greeting");
         System.out.println("Calling sub echo...");
         String requestJson = "{\"message\":\"testfromgreeting\"}";
         HttpEntity<String> entity = new HttpEntity<String>(requestJson,headers);

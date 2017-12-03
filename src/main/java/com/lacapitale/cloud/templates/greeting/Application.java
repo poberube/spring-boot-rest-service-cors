@@ -14,6 +14,7 @@ public class Application {
         SpringApplication.run(Application.class, args);
     }
 
+    // this is an example of configuring CORS for a specific resource
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {
@@ -23,5 +24,4 @@ public class Application {
             }
         };
     }
-
 }
