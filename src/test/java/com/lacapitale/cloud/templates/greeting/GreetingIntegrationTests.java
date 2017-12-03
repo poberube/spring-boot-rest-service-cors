@@ -2,6 +2,8 @@ package com.lacapitale.cloud.templates.greeting;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URI;
 
 import org.junit.Test;
@@ -15,6 +17,10 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.lacapitale.cloud.templates.greeting.Greeting;
 
 @RunWith(SpringRunner.class)
@@ -47,7 +53,27 @@ public class GreetingIntegrationTests {
     Greeting greeting = entity.getBody();
     assertEquals("Hello, World!", greeting.getContent());
   }
+  
+  @Test
+  public void testSwagger() throws IOException {
+	  ResponseEntity<String> entity = this.restTemplate.exchange(
+		        RequestEntity.get(uri("/v2/api-docs")).build(),
+		        String.class);
+		    assertEquals(HttpStatus.OK, entity.getStatusCode());
+		    System.out.println("api-docs: "+ entity.getBody());
+		    FileWriter writer = new FileWriter("openapi-generated.yaml");
+		    writer.write(asYaml(entity.getBody()));
+		    writer.close();
+  }
 
+  public String asYaml(String jsonString) throws JsonProcessingException, IOException {
+      // parse JSON
+      JsonNode jsonNodeTree = new ObjectMapper().readTree(jsonString);
+      // save it as YAML
+      String jsonAsYaml = new YAMLMapper().writeValueAsString(jsonNodeTree);
+      return jsonAsYaml;
+  }
+  
   private URI uri(String path) {
     return restTemplate.getRestTemplate().getUriTemplateHandler().expand(path);
   }

@@ -1,0 +1,63 @@
+---
+swagger: "2.0"
+info:
+  description: "Extensible service proxy enabled Greeting service"
+  version: "v1"
+  title: "Extensible service proxy enabled Greeting service"
+  termsOfService: "http://lacapitale.com/termsOfService"
+  contact:
+    name: "Developer Capitale"
+    url: "http://lacapitale.com"
+    email: "developer@lacapitale.com"
+  license:
+    name: "Copyright LaCapitale 2018"
+    url: "http://lacapitale.com/license"
+host: "greeting-api.endpoints.lacapitalepilotage.cloud.goog"
+basePath: "/"
+tags:
+- name: "greeting-controller"
+  description: "Greeting Controller"
+schemes:
+- "https"
+paths:
+  /greeting:
+    get:
+      tags:
+      - "greeting-controller"
+      summary: "greeting"
+      operationId: "greetingUsingGET"
+      consumes:
+      - "application/json"
+      produces:
+      - "*/*"
+      parameters:
+      - name: "name"
+        in: "query"
+        description: "name"
+        required: false
+        type: "string"
+        default: "World"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Greeting"
+      security:
+      - firebase:
+        - "greet"
+securityDefinitions:
+  firebase:
+    type: "oauth2"
+    authorizationUrl: "https://cloud.lacapitale.com/sso/login"
+    flow: "implicit"
+    scopes:
+      greet: "allowGreet"
+definitions:
+  Greeting:
+    type: "object"
+    properties:
+      content:
+        type: "string"
+      id:
+        type: "integer"
+        format: "int64"
