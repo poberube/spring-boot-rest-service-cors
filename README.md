@@ -110,3 +110,13 @@ Set user key
       --url http://35.227.61.134:8001/consumers/Ionic-GKE/key-auth/ \
       --data 'key=qwerty01!'
 
+Enable CORS
+
+    curl -X POST http://35.227.61.134:8001/apis/greeting-api/plugins \
+        --data "name=cors" \
+        --data "config.origins=*" \
+        --data "config.methods=GET, POST, PUT" \
+        --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, apikey" \
+        --data "config.exposed_headers=X-Auth-Token" \
+        --data "config.credentials=false" \
+        --data "config.max_age=3600"
