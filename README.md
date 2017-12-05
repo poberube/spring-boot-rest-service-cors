@@ -170,27 +170,34 @@ curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
 
 OAuth
 
-curl -i -X POST \
-      --url http://35.227.61.134:8001/apis/ \
-      --data 'name=greeting-api-oauth' \
-      --data 'hosts=greeting-api-oauth.com' \
-      --data 'upstream_url=http://greeting-svc'
+    curl -i -X POST \
+          --url http://35.227.61.134:8001/apis/ \
+          --data 'name=greeting-api-oauth' \
+          --data 'hosts=greeting-api-oauth.com' \
+          --data 'upstream_url=http://greeting-svc'
 
-curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
-        --data "name=cors" \
-        --data "config.origins=*" \
-        --data "config.methods=GET, POST, PUT, PATCH" \
-        --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
-        --data "config.exposed_headers=X-Auth-Token" \
-        --data "config.credentials=false" \
-        --data "config.max_age=3600"
+Enable CORS 
 
-curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
-    --data "name=oauth2" \
-    --data "config.enable_implicit_grant=true" \
-    --data "config.scopes=greet" \
-    --data "config.mandatory_scope=false"
+    curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
+            --data "name=cors" \
+            --data "config.origins=*" \
+            --data "config.methods=GET, POST, PUT, PATCH" \
+            --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
+            --data "config.exposed_headers=X-Auth-Token" \
+            --data "config.credentials=false" \
+            --data "config.max_age=3600"
 
-docker run --rm -p 8080:8080 pgbi/kong-dashboard start \
-  --kong-url http://35.227.61.134:8001
-  --basic-auth vcrepin=Vinnes.,
+Enable OAuth
+
+    curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
+        --data "name=oauth2" \
+        --data "config.enable_implicit_grant=true" \
+        --data "config.scopes=greet" \
+        --data "config.mandatory_scope=false"
+
+Start a dashboard
+
+    docker run --rm -p 8080:8080 pgbi/kong-dashboard start \
+      --kong-url http://35.227.61.134:8001
+      --basic-auth vcrepin=Vinnes.,
+
