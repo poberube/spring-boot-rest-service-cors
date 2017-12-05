@@ -115,8 +115,82 @@ Enable CORS
     curl -X POST http://35.227.61.134:8001/apis/greeting-api/plugins \
         --data "name=cors" \
         --data "config.origins=*" \
-        --data "config.methods=GET, POST, PUT" \
+        --data "config.methods=GET, POST, PUT, PATCH" \
         --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, apikey" \
         --data "config.exposed_headers=X-Auth-Token" \
         --data "config.credentials=false" \
         --data "config.max_age=3600"
+
+Create jwt consumer
+
+    curl -i -X POST \
+           --url http://35.227.61.134:8001/consumers/ \
+           --data "username=Ionic-GKE-JWT"
+
+    curl -X POST http://35.227.61.134:8001/consumers/Ionic-GKE-JWT/jwt -H "Content-Type: application/x-www-form-urlencoded"
+
+{"created_at":1512353113000,"id":"d2a8581a-4d20-4b2f-9a8a-e7e1a5c95797","algorithm":"HS256","key":"umfJOIMrNYIc9kmAF5aVBBE3QY8wH1YV","secret":"EXCTUzmOB1OJwMca8jdMS8vkz7z7GyNU","consumer_id":"9e06e3ac-42b7-4012-bd49-ba88e4d3b87c"}
+
+Get the list of consumers
+
+    curl -X GET http://35.227.61.134:8001/consumers/Ionic-GKE-JWT/jwt
+
+{"total":1,"data":[{"created_at":1512353113000,"id":"d2a8581a-4d20-4b2f-9a8a-e7e1a5c95797","algorithm":"HS256","key":"umfJOIMrNYIc9kmAF5aVBBE3QY8wH1YV","secret":"EXCTUzmOB1OJwMca8jdMS8vkz7z7GyNU","consumer_id":"9e06e3ac-42b7-4012-bd49-ba88e4d3b87c"}]}
+
+{
+    "typ": "JWT",
+    "alg": "HS256"
+}
+
+{
+    "iss": "umfJOIMrNYIc9kmAF5aVBBE3QY8wH1YV"
+}
+
+secret: EXCTUzmOB1OJwMca8jdMS8vkz7z7GyNU
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1bWZKT0lNck5ZSWM5a21BRjVhVkJCRTNRWTh3SDFZViJ9.KpZ2fN78VSSz_dlUOAiuFET8Paj1cY7xljOELPAL2gQ
+
+curl -i -X POST \
+      --url http://35.227.61.134:8001/apis/ \
+      --data 'name=greeting-api-jwt' \
+      --data 'hosts=greeting-api-jwt.com' \
+      --data 'upstream_url=http://greeting-svc'
+
+curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
+    --data "name=jwt"
+
+curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
+        --data "name=cors" \
+        --data "config.origins=*" \
+        --data "config.methods=GET, POST, PUT, PATCH" \
+        --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
+        --data "config.exposed_headers=X-Auth-Token" \
+        --data "config.credentials=false" \
+        --data "config.max_age=3600"
+
+OAuth
+
+curl -i -X POST \
+      --url http://35.227.61.134:8001/apis/ \
+      --data 'name=greeting-api-oauth' \
+      --data 'hosts=greeting-api-oauth.com' \
+      --data 'upstream_url=http://greeting-svc'
+
+curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
+        --data "name=cors" \
+        --data "config.origins=*" \
+        --data "config.methods=GET, POST, PUT, PATCH" \
+        --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
+        --data "config.exposed_headers=X-Auth-Token" \
+        --data "config.credentials=false" \
+        --data "config.max_age=3600"
+
+curl -X POST http://35.227.61.134:8001/apis/greeting-api-oauth/plugins \
+    --data "name=oauth2" \
+    --data "config.enable_implicit_grant=true" \
+    --data "config.scopes=greet" \
+    --data "config.mandatory_scope=false"
+
+docker run --rm -p 8080:8080 pgbi/kong-dashboard start \
+  --kong-url http://35.227.61.134:8001
+  --basic-auth vcrepin=Vinnes.,
