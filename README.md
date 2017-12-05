@@ -121,11 +121,14 @@ Enable CORS
         --data "config.credentials=false" \
         --data "config.max_age=3600"
 
+JWT 
+
 Create jwt consumer
 
     curl -i -X POST \
            --url http://35.227.61.134:8001/consumers/ \
            --data "username=Ionic-GKE-JWT"
+Enable JWT
 
     curl -X POST http://35.227.61.134:8001/consumers/Ionic-GKE-JWT/jwt -H "Content-Type: application/x-www-form-urlencoded"
 
@@ -150,23 +153,23 @@ secret: EXCTUzmOB1OJwMca8jdMS8vkz7z7GyNU
 
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJ1bWZKT0lNck5ZSWM5a21BRjVhVkJCRTNRWTh3SDFZViJ9.KpZ2fN78VSSz_dlUOAiuFET8Paj1cY7xljOELPAL2gQ
 
-curl -i -X POST \
-      --url http://35.227.61.134:8001/apis/ \
-      --data 'name=greeting-api-jwt' \
-      --data 'hosts=greeting-api-jwt.com' \
-      --data 'upstream_url=http://greeting-svc'
+    curl -i -X POST \
+          --url http://35.227.61.134:8001/apis/ \
+          --data 'name=greeting-api-jwt' \
+          --data 'hosts=greeting-api-jwt.com' \
+          --data 'upstream_url=http://greeting-svc'
 
-curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
-    --data "name=jwt"
-
-curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
-        --data "name=cors" \
-        --data "config.origins=*" \
-        --data "config.methods=GET, POST, PUT, PATCH" \
-        --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
-        --data "config.exposed_headers=X-Auth-Token" \
-        --data "config.credentials=false" \
-        --data "config.max_age=3600"
+    curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
+        --data "name=jwt"
+    
+    curl -X POST http://35.227.61.134:8001/apis/greeting-api-jwt/plugins \
+            --data "name=cors" \
+            --data "config.origins=*" \
+            --data "config.methods=GET, POST, PUT, PATCH" \
+            --data "config.headers=Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Auth-Token, Authorization" \
+            --data "config.exposed_headers=X-Auth-Token" \
+            --data "config.credentials=false" \
+            --data "config.max_age=3600"
 
 OAuth
 
